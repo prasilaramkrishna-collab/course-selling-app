@@ -30,11 +30,27 @@ app.use(
     tempFileDir : '/tmp/'
 }));
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', 'http://localhost:5176'],
+    origin: [
+        'http://localhost:5173', 
+        'http://localhost:5174', 
+        'http://localhost:5175', 
+        'http://localhost:5176',
+        'https://frontend-silk-two-95.vercel.app',
+        process.env.FRONTEND_URL
+    ].filter(Boolean),
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
 }))
+
+// Health check route
+app.get("/", (req, res) => {
+    res.json({ 
+        status: "ok", 
+        message: "Course Selling App API is running",
+        timestamp: new Date().toISOString()
+    });
+});
 
 //defining routes
 app.use("/api/v1/course", courseRoute);
