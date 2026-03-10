@@ -14,6 +14,7 @@ function CourseQuiz() {
   const [submitted, setSubmitted] = useState(false);
   const [result, setResult] = useState(null);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [hasSubmittedFeedback, setHasSubmittedFeedback] = useState(false);
   const [courseName, setCourseName] = useState("");
   const [timeLeft, setTimeLeft] = useState(null); // in seconds
   const [timerActive, setTimerActive] = useState(false);
@@ -40,6 +41,8 @@ function CourseQuiz() {
       viewCertificate: "View & Download Certificate",
       feedbackPrompt: "We'd love to hear about your experience!",
       shareFeedback: "Share Your Feedback",
+      feedbackRequired: "Submit feedback to unlock your certificate",
+      feedbackCompleted: "Feedback submitted. Your certificate is now ready.",
       backToPurchases: "Back to Purchases",
       question: "Question",
       of: "of",
@@ -74,6 +77,8 @@ function CourseQuiz() {
       viewCertificate: "प्रमाणपत्र देखें और डाउनलोड करें",
       feedbackPrompt: "हम आपके अनुभव के बारे में सुनना चाहेंगे!",
       shareFeedback: "अपना फीडबैक साझा करें",
+      feedbackRequired: "प्रमाणपत्र खोलने के लिए फीडबैक सबमिट करें",
+      feedbackCompleted: "फीडबैक सबमिट हो गया। आपका प्रमाणपत्र अब तैयार है।",
       backToPurchases: "खरीदारी पर वापस जाएं",
       question: "प्रश्न",
       of: "में से",
@@ -108,6 +113,8 @@ function CourseQuiz() {
       viewCertificate: "ಪ್ರಮಾಣಪತ್ರ ನೋಡಿ ಮತ್ತು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
       feedbackPrompt: "ನಿಮ್ಮ ಅನುಭವವನ್ನು ಕೇಳಲು ನಾವು ಬಯಸುತ್ತೇವೆ!",
       shareFeedback: "ನಿಮ್ಮ ಪ್ರತಿಕ್ರಿಯೆ ಹಂಚಿಕೊಳ್ಳಿ",
+      feedbackRequired: "ಪ್ರಮಾಣಪತ್ರ ತೆಗೆಯಲು ಪ್ರತಿಕ್ರಿಯೆ ಸಲ್ಲಿಸಿ",
+      feedbackCompleted: "ಪ್ರತಿಕ್ರಿಯೆ ಸಲ್ಲಿಸಲಾಗಿದೆ. ನಿಮ್ಮ ಪ್ರಮಾಣಪತ್ರ ಈಗ ಸಿದ್ಧವಾಗಿದೆ.",
       backToPurchases: "ಖರೀದಿಗಳಿಗೆ ಹಿಂದಿರುಗಿ",
       question: "ಪ್ರಶ್ನೆ",
       of: "ರಲ್ಲಿ",
@@ -188,6 +195,29 @@ function CourseQuiz() {
     fetchQuiz();
   }, [courseId, token, navigate]);
 
+  useEffect(() => {
+    if (!token) {
+      return;
+    }
+
+    const fetchFeedbackStatus = async () => {
+      try {
+        const response = await api.get(`/api/feedback/check/${courseId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        });
+
+        setHasSubmittedFeedback(Boolean(response.data?.hasFeedback));
+      } catch (error) {
+        console.error("Error checking feedback status:", error);
+      }
+    };
+
+    fetchFeedbackStatus();
+  }, [courseId, token]);
+
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -244,6 +274,11 @@ function CourseQuiz() {
 
       setResult(response.data.submission);
       setSubmitted(true);
+
+      if (response.data.submission?.status === "passed" && !hasSubmittedFeedback) {
+        setShowFeedback(true);
+      }
+
       toast.success(response.data.message);
     } catch (error) {
       console.error("Error submitting quiz:", error);
@@ -275,12 +310,13 @@ function CourseQuiz() {
             courseId={courseId}
             courseName={courseName}
             onSubmitSuccess={() => {
+              setHasSubmittedFeedback(true);
               setShowFeedback(false);
-              navigate("/purchases");
+              toast.success(t.feedbackCompleted);
+              navigate(`/certificate/${courseId}`);
             }}
             onCancel={() => {
               setShowFeedback(false);
-              navigate("/purchases");
             }}
           />
         )}
@@ -330,23 +366,27 @@ function CourseQuiz() {
 
               {result.status === "passed" && (
                 <>
-                  <button
-                    onClick={() => navigate(`/certificate/${courseId}`)}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold mb-4 transition-colors flex items-center justify-center gap-2"
-                  >
-                    <span>🎓</span>
-                    {t.viewCertificate}
-                  </button>
                   <p className="text-sm text-gray-600 mb-4">
-                    {t.feedbackPrompt}
+                    {hasSubmittedFeedback ? t.feedbackCompleted : t.feedbackRequired}
                   </p>
-                  <button
-                    onClick={() => setShowFeedback(true)}
-                    className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-lg font-semibold mb-4 transition-colors flex items-center justify-center gap-2"
-                  >
-                    <span>⭐</span>
-                    {t.shareFeedback}
-                  </button>
+
+                  {hasSubmittedFeedback ? (
+                    <button
+                      onClick={() => navigate(`/certificate/${courseId}`)}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold mb-4 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <span>🎓</span>
+                      {t.viewCertificate}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setShowFeedback(true)}
+                      className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-lg font-semibold mb-4 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <span>⭐</span>
+                      {t.shareFeedback}
+                    </button>
+                  )}
                 </>
               )}
 
