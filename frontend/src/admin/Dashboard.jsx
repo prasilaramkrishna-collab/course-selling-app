@@ -32,6 +32,8 @@ function Dashboard() {
   const adminName =
     `${adminData?.admin?.firstName || ""} ${adminData?.admin?.lastName || ""}`.trim() ||
     "Admin";
+  const adminEmail = adminProfile?.email || adminData?.admin?.email || "admin@futureproof.com";
+  const currentProfilePhoto = adminProfile?.profilePhoto || adminData?.admin?.profilePhoto || "/logo.webp";
 
   useEffect(() => {
     if (!adminToken) {
@@ -345,236 +347,289 @@ function Dashboard() {
         </div>
       )}
 
-    <div className="flex h-screen">
-      {/* Sidebar */}
-      <div className="w-64 bg-gray-100 p-5">
-        <div className="flex items-center flex-col mb-10">
-          <div className="relative">
-            <img 
-              src={adminProfile?.profilePhoto || "/logo.webp"} 
-              alt="Profile" 
-              className="rounded-full h-20 w-20 object-cover border-2 border-gray-300" 
-            />
-            <button
-              onClick={() => setShowPhotoUpload(!showPhotoUpload)}
-              className="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white p-1.5 rounded-full transition-colors"
-              title="Upload Photo"
-            >
-              <FaCamera size={14} />
-            </button>
-          </div>
-          <h2 className="text-lg font-semibold mt-4">I'm Admin</h2>
-          
-          {/* Photo Upload Section */}
-          {showPhotoUpload && (
-            <div className="mt-4 w-full bg-white p-3 rounded-lg shadow-md">
-              {profilePhoto ? (
-                <div className="space-y-2">
-                  <img 
-                    src={URL.createObjectURL(profilePhoto)} 
-                    alt="Preview" 
-                    className="w-20 h-20 rounded-full object-cover mx-auto border-2 border-blue-500" 
-                  />
-                  <p className="text-xs text-gray-600 text-center">Image cropped and ready</p>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        setProfilePhoto(null);
-                        setShowPhotoUpload(false);
-                      }}
-                      className="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 px-3 rounded text-sm"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleUploadPhoto}
-                      disabled={uploading}
-                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {uploading ? "Uploading..." : "Upload"}
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handlePhotoChange}
-                    className="hidden"
-                    id="admin-photo-upload"
-                  />
-                  <label
-                    htmlFor="admin-photo-upload"
-                    className="block w-full text-center bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-3 rounded cursor-pointer text-sm"
-                  >
-                    Choose Photo
-                  </label>
-                </>
-              )}
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(245,158,11,0.14),_transparent_22%),radial-gradient(circle_at_85%_20%,_rgba(45,212,191,0.12),_transparent_25%),linear-gradient(180deg,#eef4ff_0%,#f7fafc_45%,#eef3ff_100%)] text-slate-900">
+      <div className="mx-auto flex min-h-screen max-w-[1600px] flex-col gap-6 px-4 py-4 lg:flex-row lg:px-6">
+        <aside className="w-full shrink-0 overflow-y-auto rounded-[2rem] bg-slate-950/95 p-6 text-white shadow-2xl shadow-slate-900/20 lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)] lg:w-80">
+          <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
+            <div className="flex items-start justify-between gap-4">
+              <div className="relative">
+                <img
+                  src={currentProfilePhoto}
+                  alt="Profile"
+                  className="h-24 w-24 rounded-[1.5rem] object-cover ring-4 ring-white/10"
+                />
+                <button
+                  onClick={() => setShowPhotoUpload(!showPhotoUpload)}
+                  className="absolute -bottom-2 -right-2 rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-500 p-2.5 text-slate-950 shadow-lg shadow-cyan-500/20 transition hover:scale-105"
+                  title="Upload Photo"
+                >
+                  <FaCamera size={14} />
+                </button>
+              </div>
+              <div className="rounded-2xl border border-emerald-400/20 bg-emerald-400/10 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-emerald-300">
+                Admin live
+              </div>
             </div>
-          )}
-        </div>
-        <nav className="flex flex-col space-y-4">
-          <Link to="/admin/our-courses">
-            <button className="w-full bg-green-700 hover:bg-green-600 text-white py-2 rounded">
-              Our Courses
-            </button>
-          </Link>
-          <Link to="/admin/create-course">
-            <button className="w-full bg-orange-500 hover:bg-blue-600 text-white py-2 rounded">
-              Create Course
-            </button>
-          </Link>
-          <Link to="/admin/course-materials">
-            <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded flex items-center justify-center">
-              <MdLibraryBooks className="mr-2" /> Materials
-            </button>
-          </Link>
-          <Link to="/admin/certificates">
-            <button className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded">
-              📜 Certificates
-            </button>
-          </Link>
-          <Link to="/admin/feedback">
-            <button className="w-full bg-teal-600 hover:bg-teal-700 text-white py-2 rounded">
-              ⭐ User Feedback
-            </button>
-          </Link>
-          <Link to="/">
-            <button className="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded">
-              Home
-            </button>
-          </Link>
-          <Link to="/admin/login">
+
+            <div className="mt-5">
+              <p className="text-xs uppercase tracking-[0.3em] text-white/45">Operator</p>
+              <h2 className="mt-2 text-2xl font-bold text-white">{adminName}</h2>
+              <p className="mt-1 text-sm text-slate-400">{adminEmail}</p>
+            </div>
+
+            {showPhotoUpload && (
+              <div className="mt-5 rounded-[1.25rem] border border-white/10 bg-slate-900/90 p-4">
+                {profilePhoto ? (
+                  <div className="space-y-3">
+                    <img
+                      src={URL.createObjectURL(profilePhoto)}
+                      alt="Preview"
+                      className="mx-auto h-24 w-24 rounded-[1.25rem] object-cover ring-2 ring-cyan-400/30"
+                    />
+                    <p className="text-center text-xs uppercase tracking-[0.2em] text-slate-400">Ready to upload</p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setProfilePhoto(null);
+                          setShowPhotoUpload(false);
+                        }}
+                        className="flex-1 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleUploadPhoto}
+                        disabled={uploading}
+                        className="flex-1 rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-500 px-3 py-2 text-sm font-bold text-slate-950 transition hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {uploading ? "Uploading..." : "Upload"}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoChange}
+                      className="hidden"
+                      id="admin-photo-upload"
+                    />
+                    <label
+                      htmlFor="admin-photo-upload"
+                      className="block w-full cursor-pointer rounded-2xl border border-dashed border-white/15 bg-white/5 px-4 py-4 text-center text-sm font-semibold text-white/80 transition hover:bg-white/10"
+                    >
+                      Choose a profile photo
+                    </label>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+
+          <nav className="mt-6 space-y-3">
+            <Link to="/admin/our-courses" className="flex items-center justify-between rounded-[1.25rem] border border-white/8 bg-white/5 px-4 py-4 text-sm font-semibold text-white/85 transition hover:border-emerald-400/20 hover:bg-emerald-400/10 hover:text-white">
+              <span>Our Courses</span>
+              <span className="text-white/40">→</span>
+            </Link>
+            <Link to="/admin/create-course" className="flex items-center justify-between rounded-[1.25rem] border border-white/8 bg-white/5 px-4 py-4 text-sm font-semibold text-white/85 transition hover:border-orange-400/20 hover:bg-orange-400/10 hover:text-white">
+              <span>Create Course</span>
+              <span className="text-white/40">＋</span>
+            </Link>
+            <Link to="/admin/course-materials" className="flex items-center justify-between rounded-[1.25rem] border border-white/8 bg-white/5 px-4 py-4 text-sm font-semibold text-white/85 transition hover:border-blue-400/20 hover:bg-blue-400/10 hover:text-white">
+              <span className="flex items-center gap-2"><MdLibraryBooks /> Materials</span>
+              <span className="text-white/40">→</span>
+            </Link>
+            <Link to="/admin/certificates" className="flex items-center justify-between rounded-[1.25rem] border border-white/8 bg-white/5 px-4 py-4 text-sm font-semibold text-white/85 transition hover:border-purple-400/20 hover:bg-purple-400/10 hover:text-white">
+              <span>📜 Certificates</span>
+              <span className="text-white/40">→</span>
+            </Link>
+            <Link to="/admin/feedback" className="flex items-center justify-between rounded-[1.25rem] border border-white/8 bg-white/5 px-4 py-4 text-sm font-semibold text-white/85 transition hover:border-teal-400/20 hover:bg-teal-400/10 hover:text-white">
+              <span>⭐ User Feedback</span>
+              <span className="text-white/40">→</span>
+            </Link>
+          </nav>
+
+          <div className="mt-6 rounded-[1.5rem] border border-white/8 bg-gradient-to-br from-white/8 to-white/4 p-4">
+            <p className="text-xs uppercase tracking-[0.3em] text-white/40">Control summary</p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+              <div className="rounded-2xl border border-white/8 bg-slate-900/70 p-4">
+                <p className="text-sm text-slate-400">Course catalog</p>
+                <p className="mt-1 text-2xl font-bold text-white">{loadingCourses ? "..." : totalCourses}</p>
+              </div>
+              <div className="rounded-2xl border border-white/8 bg-slate-900/70 p-4">
+                <p className="text-sm text-slate-400">Revenue tracked</p>
+                <p className="mt-1 text-2xl font-bold text-white">₹{loadingPurchases ? "..." : totalRevenue}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 grid gap-3">
+            <Link to="/" className="rounded-[1.25rem] border border-white/8 bg-white px-4 py-3 text-center text-sm font-bold text-slate-950 transition hover:bg-slate-100">
+              Back to website
+            </Link>
             <button
               onClick={handleLogout}
-              className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded"
+              className="rounded-[1.25rem] bg-gradient-to-r from-amber-400 to-orange-500 px-4 py-3 text-sm font-bold text-slate-950 transition hover:scale-[1.01]"
             >
               Logout
             </button>
-          </Link>
-        </nav>
-      </div>
-
-      <div className="flex-1 bg-gray-50 p-8 overflow-y-auto">
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">Welcome, {adminName}</h1>
-          <p className="text-gray-600 mt-2">Manage your courses and keep content updated from this dashboard.</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-sm text-gray-500">Total Courses</h2>
-            <p className="text-3xl font-bold text-gray-800 mt-2">{loadingCourses ? "..." : totalCourses}</p>
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-sm text-gray-500">Average Price</h2>
-            <p className="text-3xl font-bold text-gray-800 mt-2">₹{loadingCourses ? "..." : averagePrice}</p>
-          </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-sm text-gray-500">Dashboard Status</h2>
-            <p className="text-xl font-semibold text-green-600 mt-3">System Active</p>
-            <p className="text-sm text-gray-500 mt-1">All admin tools are available.</p>
-          </div>
-        </div>
+        </aside>
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-800">Recently Added Courses</h2>
-            <Link to="/admin/our-courses" className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-              View all
-            </Link>
-          </div>
-
-          {loadingCourses ? (
-            <p className="text-gray-500">Loading recent courses...</p>
-          ) : recentCourses.length === 0 ? (
-            <p className="text-gray-500">No courses yet. Create your first course.</p>
-          ) : (
-            <div className="space-y-3">
-              {recentCourses.map((course) => (
-                <div key={course._id} className="border border-gray-200 rounded-md p-3 flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-gray-800">{course.title}</p>
-                    <p className="text-sm text-gray-500">₹{course.price}</p>
-                  </div>
-                  <Link
-                    to={`/admin/update-course/${course._id}`}
-                    className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-sm"
-                  >
-                    Update
-                  </Link>
+        <main className="min-w-0 flex-1 space-y-6 overflow-y-auto rounded-[2rem] bg-white/60 p-4 shadow-xl shadow-slate-200/60 backdrop-blur-xl sm:p-6 lg:p-8">
+          <section className="overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#0f172a_0%,#132d46_42%,#082f49_100%)] p-6 text-white shadow-2xl shadow-cyan-950/20">
+            <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+              <div className="max-w-2xl">
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/8 px-4 py-2 text-xs uppercase tracking-[0.3em] text-cyan-200">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                  Operations cockpit
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+                <h1 className="mt-5 text-4xl font-black leading-tight text-white sm:text-5xl">
+                  Welcome back, {adminName}.
+                </h1>
+                <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg">
+                  Track course growth, revenue, learner actions, certificates, and content updates from a dashboard that finally feels as polished as the public experience.
+                </p>
+              </div>
 
-        <div className="bg-white rounded-lg shadow p-6 mt-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Recent Activity</h2>
-          {loadingCourses ? (
-            <p className="text-gray-500">Loading activity...</p>
-          ) : recentActivity.length === 0 ? (
-            <p className="text-gray-500">No recent activity yet.</p>
-          ) : (
-            <div className="space-y-3">
-              {recentActivity.map((item) => (
-                <div key={item.id} className="border border-gray-200 rounded-md p-3 flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-gray-800">{item.action}: {item.title}</p>
-                    <p className="text-sm text-gray-500">{formatActivityTime(item.timestamp)}</p>
-                  </div>
-                  <Link
-                    to={`/admin/update-course/${item.id}`}
-                    className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-                  >
-                    Open
-                  </Link>
+              <div className="grid gap-3 sm:grid-cols-3 xl:w-[32rem]">
+                <div className="rounded-[1.5rem] border border-white/10 bg-white/8 p-4 backdrop-blur-sm">
+                  <p className="text-xs uppercase tracking-[0.25em] text-white/45">Courses</p>
+                  <p className="mt-3 text-3xl font-bold text-white">{loadingCourses ? "..." : totalCourses}</p>
                 </div>
-              ))}
+                <div className="rounded-[1.5rem] border border-white/10 bg-white/8 p-4 backdrop-blur-sm">
+                  <p className="text-xs uppercase tracking-[0.25em] text-white/45">Average price</p>
+                  <p className="mt-3 text-3xl font-bold text-white">₹{loadingCourses ? "..." : averagePrice}</p>
+                </div>
+                <div className="rounded-[1.5rem] border border-white/10 bg-white/8 p-4 backdrop-blur-sm">
+                  <p className="text-xs uppercase tracking-[0.25em] text-white/45">Status</p>
+                  <p className="mt-3 text-xl font-bold text-emerald-300">System active</p>
+                  <p className="mt-1 text-sm text-slate-300">All admin tools online.</p>
+                </div>
+              </div>
             </div>
-          )}
-        </div>
+          </section>
 
-        <div className="bg-white rounded-lg shadow p-6 mt-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-800">Who Purchased Courses</h2>
-            <div className="text-sm text-gray-600">
-              <span className="mr-4">Purchases: <strong>{loadingPurchases ? "..." : totalPurchases}</strong></span>
-              <span>Revenue: <strong>₹{loadingPurchases ? "..." : totalRevenue}</strong></span>
-            </div>
-          </div>
+          <section className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+            <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm shadow-slate-200/60">
+              <div className="mb-5 flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Recent catalog</p>
+                  <h2 className="mt-2 text-2xl font-bold text-slate-900">Recently added courses</h2>
+                </div>
+                <Link to="/admin/our-courses" className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800">
+                  View all
+                </Link>
+              </div>
 
-          {loadingPurchases ? (
-            <p className="text-gray-500">Loading purchase data...</p>
-          ) : purchaseRows.length === 0 ? (
-            <p className="text-gray-500">No purchases found yet.</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full border border-gray-200 rounded-md">
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="text-left text-sm font-semibold text-gray-700 px-4 py-2">Buyer Name</th>
-                    <th className="text-left text-sm font-semibold text-gray-700 px-4 py-2">Email</th>
-                    <th className="text-left text-sm font-semibold text-gray-700 px-4 py-2">Course</th>
-                    <th className="text-left text-sm font-semibold text-gray-700 px-4 py-2">Amount</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {purchaseRows.map((row) => (
-                    <tr key={row.purchaseId} className="border-t border-gray-200">
-                      <td className="px-4 py-2 text-sm text-gray-800">{row.buyerName}</td>
-                      <td className="px-4 py-2 text-sm text-gray-600">{row.buyerEmail}</td>
-                      <td className="px-4 py-2 text-sm text-gray-800">{row.courseTitle}</td>
-                      <td className="px-4 py-2 text-sm text-gray-800">₹{row.amount}</td>
-                    </tr>
+              {loadingCourses ? (
+                <p className="text-slate-500">Loading recent courses...</p>
+              ) : recentCourses.length === 0 ? (
+                <p className="text-slate-500">No courses yet. Create your first course.</p>
+              ) : (
+                <div className="space-y-4">
+                  {recentCourses.map((course, index) => (
+                    <div key={course._id} className="flex flex-col gap-4 rounded-[1.4rem] border border-slate-200 bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex items-start gap-4">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-cyan-500 text-base font-bold text-white shadow-lg shadow-cyan-200/50">
+                          {String(index + 1).padStart(2, "0")}
+                        </div>
+                        <div>
+                          <p className="text-lg font-bold text-slate-900">{course.title}</p>
+                          <p className="mt-1 text-sm text-slate-500">₹{course.price} • Updated {formatActivityTime(course.updatedAt || course.createdAt)}</p>
+                        </div>
+                      </div>
+                      <Link
+                        to={`/admin/update-course/${course._id}`}
+                        className="inline-flex items-center justify-center rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-950 hover:bg-slate-950 hover:text-white"
+                      >
+                        Edit course
+                      </Link>
+                    </div>
                   ))}
-                </tbody>
-              </table>
+                </div>
+              )}
             </div>
-          )}
-        </div>
+
+            <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm shadow-slate-200/60">
+              <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Recent operations</p>
+              <h2 className="mt-2 text-2xl font-bold text-slate-900">Activity stream</h2>
+
+              {loadingCourses ? (
+                <p className="mt-5 text-slate-500">Loading activity...</p>
+              ) : recentActivity.length === 0 ? (
+                <p className="mt-5 text-slate-500">No recent activity yet.</p>
+              ) : (
+                <div className="mt-5 space-y-4">
+                  {recentActivity.map((item) => (
+                    <div key={item.id} className="rounded-[1.35rem] border border-slate-200 bg-slate-50 p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cyan-700">{item.action}</p>
+                          <p className="mt-2 text-base font-bold text-slate-900">{item.title}</p>
+                          <p className="mt-1 text-sm text-slate-500">{formatActivityTime(item.timestamp)}</p>
+                        </div>
+                        <Link
+                          to={`/admin/update-course/${item.id}`}
+                          className="rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 transition hover:bg-slate-950 hover:text-white"
+                        >
+                          Open
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+
+          <section className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm shadow-slate-200/60">
+            <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Revenue intelligence</p>
+                <h2 className="mt-2 text-2xl font-bold text-slate-900">Who purchased courses</h2>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-[1.25rem] bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+                  Purchases <span className="ml-2 font-bold">{loadingPurchases ? "..." : totalPurchases}</span>
+                </div>
+                <div className="rounded-[1.25rem] bg-orange-50 px-4 py-3 text-sm text-orange-800">
+                  Revenue <span className="ml-2 font-bold">₹{loadingPurchases ? "..." : totalRevenue}</span>
+                </div>
+              </div>
+            </div>
+
+            {loadingPurchases ? (
+              <p className="text-slate-500">Loading purchase data...</p>
+            ) : purchaseRows.length === 0 ? (
+              <p className="text-slate-500">No purchases found yet.</p>
+            ) : (
+              <div className="overflow-x-auto rounded-[1.5rem] border border-slate-200">
+                <table className="min-w-full bg-white">
+                  <thead className="bg-slate-950 text-left text-white">
+                    <tr>
+                      <th className="px-5 py-4 text-sm font-semibold">Buyer Name</th>
+                      <th className="px-5 py-4 text-sm font-semibold">Email</th>
+                      <th className="px-5 py-4 text-sm font-semibold">Course</th>
+                      <th className="px-5 py-4 text-sm font-semibold">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {purchaseRows.map((row, index) => (
+                      <tr key={row.purchaseId} className={index % 2 === 0 ? "bg-white" : "bg-slate-50"}>
+                        <td className="px-5 py-4 text-sm font-semibold text-slate-900">{row.buyerName}</td>
+                        <td className="px-5 py-4 text-sm text-slate-600">{row.buyerEmail}</td>
+                        <td className="px-5 py-4 text-sm text-slate-800">{row.courseTitle}</td>
+                        <td className="px-5 py-4 text-sm font-semibold text-slate-900">₹{row.amount}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
+        </main>
       </div>
     </div>
     </>

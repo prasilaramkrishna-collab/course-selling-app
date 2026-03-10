@@ -206,3 +206,35 @@ export const getAdminProfile = async (req, res) => {
    }
 };
 
+export const getAdminPreviewByEmail = async (req, res) => {
+   try {
+      const email = (req.query.email || '').trim().toLowerCase();
+
+      if (!email) {
+         return res.status(400).json({ errors: 'Email is required' });
+      }
+
+      const admin = await Admin.findOne({ email }).select('firstName lastName email profilePhoto');
+
+      if (!admin) {
+         return res.status(404).json({
+            success: false,
+            message: 'Admin not found'
+         });
+      }
+
+      return res.status(200).json({
+         success: true,
+         admin: {
+            firstName: admin.firstName,
+            lastName: admin.lastName,
+            email: admin.email,
+            profilePhoto: admin.profilePhoto
+         }
+      });
+   } catch (error) {
+      console.error('Error fetching admin preview:', error);
+      return res.status(500).json({ errors: 'Error fetching admin preview' });
+   }
+};
+
