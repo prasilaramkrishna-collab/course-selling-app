@@ -12,12 +12,18 @@ import certificateRoute from "./routes/certificate.route.js";
 import feedbackRoute from "./routes/feedback.route.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
+import { existsSync } from "fs";
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 const DB_URI = process.env.MONGO_URI;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const frontendDistPath = path.resolve(__dirname, "../frontend/dist");
 
 
 // Middleware to parse JSON bodies
@@ -44,7 +50,7 @@ app.use(cors({
 }))
 
 // Health check route
-app.get("/", (req, res) => {
+app.get("/api/health", (req, res) => {
     res.json({ 
         status: "ok", 
         message: "Course Selling App API is running",
@@ -60,6 +66,14 @@ app.use("/api/payment", paymentRoute);
 app.use("/api/quiz", quizRoute);
 app.use("/api/certificate", certificateRoute);
 app.use("/api/feedback", feedbackRoute);
+
+if (existsSync(frontendDistPath)) {
+    app.use(express.static(frontendDistPath));
+
+    app.get("*", (req, res) => {
+        res.sendFile(path.join(frontendDistPath, "index.html"));
+    });
+}
 
  // cloudinary Configuration code
     cloudinary.config({ 

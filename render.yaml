@@ -2,9 +2,9 @@ services:
   - type: web
     name: course-selling-app-backend
     runtime: node
-    rootDir: backend
-    buildCommand: npm install
-    startCommand: npm start
+    rootDir: .
+    buildCommand: npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend
+    startCommand: npm start --prefix backend
     autoDeploy: true
     envVars:
       - key: NODE_ENV
@@ -24,7 +24,7 @@ services:
       - key: api_secret
         sync: false
       - key: FRONTEND_URL
-        value: https://frontend-silk-two-95.vercel.app
+        value: https://course-selling-app-1-38ve.onrender.com
       - key: RAZORPAY_KEY_ID
         sync: false
       - key: RAZORPAY_KEY_SECRET
