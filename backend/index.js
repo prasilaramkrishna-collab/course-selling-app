@@ -70,7 +70,7 @@ app.use("/api/feedback", feedbackRoute);
 if (existsSync(frontendDistPath)) {
     app.use(express.static(frontendDistPath));
 
-    app.get("*", (req, res) => {
+    app.get("/{*splat}", (req, res) => {
         res.sendFile(path.join(frontendDistPath, "index.html"));
     });
 }
