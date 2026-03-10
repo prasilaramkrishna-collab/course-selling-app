@@ -1,0 +1,41 @@
+services:
+  - type: web
+    name: course-selling-app-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_USER_PASSWORD
+        sync: false
+      - key: JWT_ADMIN_PASSWORD
+        sync: false
+      - key: cloud_name
+        sync: false
+      - key: api_key
+        sync: false
+      - key: api_secret
+        sync: false
+      - key: FRONTEND_URL
+        value: https://frontend-silk-two-95.vercel.app
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: EMAIL_SERVICE
+        sync: false
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASSWORD
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
