@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Course Update</title>
+  <style>
+    body { font-family: Arial; padding: 20px; max-width: 600px; margin: 0 auto; }
+    input, textarea { display: block; width: 100%; margin: 10px 0; padding: 8px; }
+    button { padding: 10px 20px; cursor: pointer; }
+    #response { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
+    .error { color: red; }
+    .success { color: green; }
+  </style>
+</head>
+<body>
+  <h1>Test Course Update with Image</h1>
+  
+  <input type="text" id="title" placeholder="Title" value="Updated Course Title">
+  <input type="text" id="description" placeholder="Description" value="Updated description">
+  <input type="number" id="price" placeholder="Price" value="299">
+  <input type="file" id="image" accept="image/*" />
+  
+  <button onclick="testUpdate()">Test Update</button>
+  
+  <div id="response"></div>
+
+  <script>
+    // Courses from the backend
+    const COURSE_ID = "699edd8c140280b8ad7abb57";
+    const BACKEND_URL = "http://localhost:4001/api/v1";
+    
+    async function testUpdate() {
+      const title = document.getElementById('title').value;
+      const description = document.getElementById('description').value;
+      const price = document.getElementById('price').value;
+      const imageInput = document.getElementById('image');
+      
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('description', description);
+      formData.append('price', price);
+      
+      if (imageInput.files.length > 0) {
+        formData.append('image', imageInput.files[0]);
+        console.log('Adding file:', imageInput.files[0].name);
+      }
+      
+      // Get admin token from localStorage
+      const admin = JSON.parse(localStorage.getItem('admin'));
+      const token = admin?.token;
+      
+      if (!token) {
+        alert('Please login first in another tab');
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${BACKEND_URL}/course/update/${COURSE_ID}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+        
+        const data = await response.json();
+        const responseDiv = document.getElementById('response');
+        
+        if (response.ok) {
+          responseDiv.innerHTML = `<div class="success"><strong>Success!</strong><br>${JSON.stringify(data, null, 2)}</div>`;
+        } else {
+          responseDiv.innerHTML = `<div class="error"><strong>Error:</strong><br>${JSON.stringify(data, null, 2)}</div>`;
+        }
+      } catch (error) {
+        document.getElementById('response').innerHTML = `<div class="error"><strong>Request Failed:</strong><br>${error.message}</div>`;
+      }
+    }
+    
+    // Display admin token status
+    const admin = JSON.parse(localStorage.getItem('admin'));
+    if (admin?.token) {
+      console.log('Admin token found:', admin.token.substring(0, 40) + '...');
+    } else {
+      console.warn('No admin token in localStorage');
+    }
+  </script>
+</body>
+</html>

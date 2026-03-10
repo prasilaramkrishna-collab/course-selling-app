@@ -1,0 +1,12 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#1e293b"/>
+  <text x="50%" y="45%" text-anchor="middle" fill="#64748b" font-size="24" font-family="Arial, sans-serif">
+    Course Image
+  </text>
+  <text x="50%" y="55%" text-anchor="middle" fill="#475569" font-size="16" font-family="Arial, sans-serif">
+    Coming Soon
+  </text>
+  <rect x="170" y="120" width="60" height="60" fill="none" stroke="#475569" stroke-width="2" rx="5"/>
+  <circle cx="190" cy="145" r="8" fill="#475569"/>
+  <polyline points="175,165 190,150 205,165" fill="none" stroke="#475569" stroke-width="2"/>
+</svg>
