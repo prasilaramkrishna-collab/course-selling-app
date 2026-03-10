@@ -23,7 +23,7 @@ const port = process.env.PORT || 3000;
 const DB_URI = process.env.MONGO_URI;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const frontendDistPath = path.resolve(__dirname, "../frontend/dist");
+const frontendDistPath = path.resolve(__dirname, "public");
 
 
 // Middleware to parse JSON bodies
