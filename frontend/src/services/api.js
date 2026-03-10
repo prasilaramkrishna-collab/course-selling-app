@@ -1,7 +1,17 @@
 import axios from 'axios';
 
+const configuredBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
+
+// In production deploys, ignore localhost API URLs baked at build time.
+const resolvedBaseUrl =
+  typeof window !== 'undefined' &&
+  window.location.hostname !== 'localhost' &&
+  configuredBaseUrl.includes('localhost')
+    ? ''
+    : configuredBaseUrl;
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '',
+  baseURL: resolvedBaseUrl,
 });
 
 // Response interceptor to handle token expiration globally
